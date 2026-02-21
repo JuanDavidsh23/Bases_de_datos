@@ -334,4 +334,25 @@ COMO PROBAR:
 2.mysql -u juan -p ME CONECTO Y PONGO LA CLAVE QUE DEFINI 1234 (si mostramos las bases de datos "SHOW DATABASES" no saldra la vista)
 3.Pero debemos usar el comando SET ROLE revisor_academico; para obtener ese permiso o ese rol y poder ver la vista
 4.SELECT * FROM vista_historial_academico;
+5.REVOKE INSERT, UPDATE, DELETE ON inscripciones FROM revisor_academico;
 
+preparas la transaccion 
+BEGIN; 
+
+primer cambio y guardar un punto de control 
+UPDATE inscripciones
+SET calificacion_final = 4.5
+WHERE id_estudiante = 1 AND id_curso = 2;
+
+SAVEPOINT cambio1;
+
+segundo cambio 
+UPDATE inscripciones
+SET calificacion_final = 3.9
+WHERE id_estudiante = 2 AND id_curso = 3;
+
+simular un error y revertir parcialmente 
+ROLLBACK TO cambio1;
+
+confirmar los cambios correctos 
+COMMIT;
